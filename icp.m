@@ -1,11 +1,18 @@
 % first random intialize R is the identity matrix and t is zeroies
 
-function icp(target_file_name, source_file_name)
+function [R, t] = icp(source_file_name, target_file_name, source_type)
     figure;
-    iters = 100; % max iters 
+    iters = 30; % max iters 
     
-    P = loadMatrixFromFile(target_file_name);  
-    Q = loadMatrixFromFile(source_file_name);
+    if strcmp(source_type,'.mat')
+        P = loadMatrixFromFile(source_file_name);  
+        Q = loadMatrixFromFile(target_file_name);
+    elseif strcmp(source_type,'.pcd')
+        P = loadPcdFromFile(source_file_name);  
+        Q = loadPcdFromFile(target_file_name);
+    else 
+        %error('unsuported file, must be .mat or .pcd');
+    end
     
     n = size(P, 2);
     m = size(Q, 2);
@@ -15,15 +22,15 @@ function icp(target_file_name, source_file_name)
     
     transformed_P = P;
     for itr = 1:iters
-        [~, ~, Q_matches] =  matchBruteForce(transformed_P,Q);
+        [~, ~, Q_matches] =  matchBruteForce(transformed_P,Q); % miss moeten we hier maar een sample functie van maken ofzo
         
         P_mean = mean(transformed_P,2);
         Q_mean = mean(Q_matches,2);
         
         %mindist is unused for now
-        R_ = calcR(transformed_P,Q_matches, P_mean,Q_mean); % not implemented func
-        
+        R_ = calcR(transformed_P,Q_matches, P_mean,Q_mean); 
         R = R_ * R;
+        
         t_ = P_mean - R * Q_mean;
         t = R_ * t + t_;
         

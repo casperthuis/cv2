@@ -1,4 +1,4 @@
-function [match, mindist,new_q] = matchBruteForce(q, p)
+function [match, mindist,new_q] = matchBruteForce(p, q)
     m = size(p,2);
     n = size(q,2);    
     match = zeros(1,m);
@@ -15,10 +15,9 @@ function [match, mindist,new_q] = matchBruteForce(q, p)
     
     mindist = sqrt(mindist);
     
-    new_q = zeros(size(q,1), size(q,2));
+    new_q = zeros(size(p,1), size(p,2));
     
     for idx=1:m
         new_q(:,idx) = q(:,match(idx));
     end 
-    
 end % matchBruteForce
