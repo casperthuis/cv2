@@ -10,19 +10,15 @@ function [match, mindist,new_q] = matchBruteForce(q, p)
             % points x,y or z. 
             d=d+(q(ti,:)-p(ti,ki)).^2;
         end
-        
         [mindist(ki),match(ki)]=min(d);
     end
     
     mindist = sqrt(mindist);
     
-    new_q = zeros(size(p,1), size(p,2));
+    new_q = zeros(size(q,1), size(q,2));
     
     for idx=1:m
         new_q(:,idx) = q(:,match(idx));
     end 
     
 end % matchBruteForce
-
-% I think this implementation is quite faster than the current
-% implementation in main()
