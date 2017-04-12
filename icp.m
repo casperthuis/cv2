@@ -1,5 +1,3 @@
-% first random intialize R is the identity matrix and t is zeroies
-
 function [R, t] = icp(source_file_name, target_file_name, source_type)
     figure;
     iters = 30; % max iters 
@@ -12,6 +10,7 @@ function [R, t] = icp(source_file_name, target_file_name, source_type)
         Q = loadPcdFromFile(target_file_name);
     else 
         %error('unsuported file, must be .mat or .pcd');
+        %hoezo werkt dit niet 
     end
     
     n = size(P, 2);
@@ -22,7 +21,8 @@ function [R, t] = icp(source_file_name, target_file_name, source_type)
     
     transformed_P = P;
     for itr = 1:iters
-        [~, ~, Q_matches] =  matchBruteForce(transformed_P,Q); % miss moeten we hier maar een sample functie van maken ofzo
+        % brute force is echt veeeeel te traag vor de point clouds 
+        [~, ~, Q_matches] =  matchBruteForce(transformed_P,Q); % miss moeten we hier maar een sample functie van maken ofzo, met als optie bruteforce
         
         P_mean = mean(transformed_P,2);
         Q_mean = mean(Q_matches,2);
