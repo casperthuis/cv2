@@ -24,6 +24,10 @@ function [R, t] = icp(source_file_name, target_file_name, source_type ,plotting,
     for itr = 1:iters
         if strcmp(sampling_type,'brute_force')
             [~, ~, Q_matches] =  matchBruteForce(transformed_P,Q);
+        else if strcmp(sampling_type, 'random')
+            percentage = 0.1;
+            [~, ~, Q_matches, transformed_P ]= random_sampling(transformed_P, Q, percentage);
+        else if strcmp
         else 
             error('choose a valid sampling type: brute_force,')
         end    
