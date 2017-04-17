@@ -17,24 +17,21 @@ function [ Pcd,Pcd2 ] = samplePoints(Pcd,sampling, percentage, varargin)
 %
 % -------------------------------------------------------------------------
 
-
     n = size(Pcd,2);
-    k = round(n*percentage);
     
     if strcmp('uniform', sampling)
         idxs = floor(linspace(1,n, percentage * n));
-        Pcd = Pcd(:,idxs);
-        if ~isempty(varargin)
-            Pcd2 = varargin{1}(:,idxs);
-        end
+        
     elseif strcmp('random', sampling)
+        k = round(n*percentage);
         idxs = randi([1 n],1,k);
-        Pcd = Pcd(:,idxs);
-        if ~isempty(varargin)
-            Pcd2 = varargin{1}(:,idxs);
-        end
     else 
         error('Give a valid sampling method')
+    end
+    
+    Pcd = Pcd(:,idxs);
+    if ~isempty(varargin)
+        Pcd2 = varargin{1}(:,idxs);
     end
 end
 
