@@ -36,7 +36,6 @@ function [R, t] = icp(source_file_name, target_file_name, source_type ,plotting,
         error('unsuported file, must be .mat or .pcd');
     end
     
-    
     iters = 30; % max iters 
     n = size(P, 2);
     m = size(Q, 2);
@@ -46,12 +45,12 @@ function [R, t] = icp(source_file_name, target_file_name, source_type ,plotting,
     time = cputime;
     transformed_P = P;
     for itr = 1:iters
-        percentage = 0.01; % maybe this should be a input var
+        percentage = 0.1; % maybe this should be a input var
         if ~strcmp(sampling_type, 'all')
             transformed_P = samplePoints(transformed_P, sampling_type, percentage);
         end  
         
-        [~, ~, Q_matches] =  matchPoints(transformed_P,Q); 
+        [~, ~, Q_matches] =  matchPoints(transformed_P,Q, 'kd_tree'); 
         
         P_mean = mean(transformed_P,2);
         Q_mean = mean(Q_matches,2);
