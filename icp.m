@@ -1,8 +1,30 @@
 function [R, t] = icp(source_file_name, target_file_name, source_type ,plotting, sampling_type)
+% -------------------------------------------------------------------------
+%   Description:
+%     Implementation of the ICP algorithm.
+%
+%   Input:
+%       - source_file_name : file name of the source with respect to the project
+%       source folder
+%       - target_file_name : file name of the target with respect to the project
+%       source folder
+%       - source_type: type of the source file: matrix or point cloud
+%       - plotting: if true, the results will be plotted
+%       - sampling_type: how to subsample the data
+%
+%   Output:
+%       - R: rotation matrix
+%       - t: transformation vector
+%
+% -------------------------------------------------------------------------
+
     if plotting
         figure;
     end
     
+    if ~strcmp(sampling_type, 'random') && ~strcmp(sampling_type, 'uniform') && ~strcmp(sampling_type, 'all')
+        error('give a valid sampling type: all, random or uniform');
+    end 
     
     if strcmp(source_type,'.mat')
         P = loadMatrixFromFile(source_file_name);  
@@ -13,6 +35,8 @@ function [R, t] = icp(source_file_name, target_file_name, source_type ,plotting,
     else 
         error('unsuported file, must be .mat or .pcd');
     end
+    
+    
     iters = 30; % max iters 
     n = size(P, 2);
     m = size(Q, 2);
@@ -22,16 +46,12 @@ function [R, t] = icp(source_file_name, target_file_name, source_type ,plotting,
     
     transformed_P = P;
     for itr = 1:iters
-        if strcmp(sampling_type,'brute_force')
-            [~, ~, Q_matches] =  matchBruteForce(transformed_P,Q);
-        else if strcmp(sampling_type, 'random')
-            percentage = 0.1;
-            [~, ~, Q_matches, transformed_P ]= random_sampling(transformed_P, Q, percentage);
-        else if strcmp(sampling_type, 'uniform')
-            [~, ~, Q_matches, transformed_P ]= uniform_sampling(transformed_P, Q, percentage);
-        else 
-            error('choose a valid sampling type: brute_force,')
-        end    
+        percentage = 0.01; % maybe this should be a input var
+        if ~strcmp(sampling_type, 'all')
+            transformed_P = samplePoints(transformed_P, sampling_type, percentage);
+        end  
+        
+        [~, ~, Q_matches] =  matchPoints(transformed_P,Q);
         
         P_mean = mean(transformed_P,2);
         Q_mean = mean(Q_matches,2);
@@ -53,7 +73,9 @@ function [R, t] = icp(source_file_name, target_file_name, source_type ,plotting,
         end
         if rms < current_rms || rms == 0 || abs(current_rms - rms < 0.01)
             current_rms =  rms;
-            disp(strcat('current error: ', num2str(current_rms,3)))
+            if  plotting
+                disp(strcat('current error: ', num2str(current_rms,3)));
+            end 
         else 
             break
         end 
