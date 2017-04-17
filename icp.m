@@ -27,7 +27,8 @@ function [R, t] = icp(source_file_name, target_file_name, source_type ,plotting,
         else if strcmp(sampling_type, 'random')
             percentage = 0.1;
             [~, ~, Q_matches, transformed_P ]= random_sampling(transformed_P, Q, percentage);
-        else if strcmp
+        else if strcmp(sampling_type, 'uniform')
+            [~, ~, Q_matches, transformed_P ]= uniform_sampling(transformed_P, Q, percentage);
         else 
             error('choose a valid sampling type: brute_force,')
         end    
