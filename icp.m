@@ -36,7 +36,7 @@ function [R, t] = icp(source_file_name, target_file_name, source_type ,plotting,
         error('unsuported file, must be .mat or .pcd');
     end
     
-    iters = 30; % max iters 
+    iters = 30; % max iters,  maybe this should be a input var 
     n = size(P, 2);
     m = size(Q, 2);
     R =  eye(3);
@@ -56,7 +56,6 @@ function [R, t] = icp(source_file_name, target_file_name, source_type ,plotting,
         Q_mean = mean(Q_matches,2);
         
         R_ = calcR(transformed_P, Q_matches, P_mean,Q_mean); 
-        
         R = R_ * R;
         
         t_ = P_mean - R * Q_mean;
@@ -80,5 +79,6 @@ function [R, t] = icp(source_file_name, target_file_name, source_type ,plotting,
             break
         end 
     end
+    disp(strcat('final error: ', num2str(current_rms,3)));
     disp(strcat('cpu time to iterations: ', num2str(cputime-time)))
 end %icp 

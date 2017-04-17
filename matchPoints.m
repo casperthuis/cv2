@@ -1,4 +1,21 @@
 function [match, mindist,new_q] = matchPoints(p, q, matching_type)
+% -------------------------------------------------------------------------
+%   Description:
+%       Function that returns matching points in de target point cloud.
+%       Brute force (match all points with all points) or using a  KNN
+%       search
+%
+%   Input:
+%       - p : source cloud
+%       - q : target cloud 
+%       - matching_type: kd_tree or brute_force
+%
+%   Output:
+%       - match: matching idxs
+%       - mindist: distance between source and matching target point
+%       - new_q: q with the matching points
+%
+% -------------------------------------------------------------------------
     m = size(p,2);
     n = size(q,2);    
     match = zeros(1,m);
@@ -17,11 +34,11 @@ function [match, mindist,new_q] = matchPoints(p, q, matching_type)
         end
         mindist = sqrt(mindist);
     elseif strcmp(matching_type, 'kd_tree')
-        Mdl = KDTreeSearcher(p.');
-        match = knnsearch(Mdl,q.','K',1);
+        Mdl = KDTreeSearcher(q.');
+        match = knnsearch(Mdl,p.','K',1);
         for ki=1:m
             new_q(:,ki) = q(:,match(ki));
-        end 
+        end
     else 
         error('use a valid matching type: brute_force or kd_tree')
     end
