@@ -43,7 +43,7 @@ function [R, t] = icp(source_file_name, target_file_name, source_type ,plotting,
     R =  eye(3);
     t =  zeros(3,1);
     current_rms = inf(1);
-    
+    time = cputime;
     transformed_P = P;
     for itr = 1:iters
         percentage = 0.01; % maybe this should be a input var
@@ -51,18 +51,19 @@ function [R, t] = icp(source_file_name, target_file_name, source_type ,plotting,
             transformed_P = samplePoints(transformed_P, sampling_type, percentage);
         end  
         
-        [~, ~, Q_matches] =  matchPoints(transformed_P,Q);
+        [~, ~, Q_matches] =  matchPoints(transformed_P,Q); 
         
-        P_mean = mean(transformed_P,2);
+        P_mean = mean(subset_P,2);
         Q_mean = mean(Q_matches,2);
         
-        R_ = calcR(transformed_P,Q_matches, P_mean,Q_mean); 
+        R_ = calcR(subset_P, Q_matches, P_mean,Q_mean); 
+        
         R = R_ * R;
         
         t_ = P_mean - R * Q_mean;
         t = R_ * t + t_;
         
-        rms = calc_error(transformed_P, Q_matches); 
+        rms = calc_error(subset_P, Q_matches); 
         transformed_P = R * P - t;
         if plotting
             clf;
@@ -79,5 +80,6 @@ function [R, t] = icp(source_file_name, target_file_name, source_type ,plotting,
         else 
             break
         end 
-    end 
+    end
+    disp(strcat('cpu time to iterations: ', num2str(cputime-time)))
 end %icp 

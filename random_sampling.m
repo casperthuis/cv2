@@ -3,7 +3,7 @@ function [ match, mindist, new_q, new_p] = random_sampling( p, q, percentage)
 %   Detailed explanation goes here
     m = size(p,2);
     n = size(q,2);
-    k = round(n*percentage)
+    k = round(n*percentage);
     match = zeros(1,k);
     mindist = zeros(1,k);
     r = randi([1 m],1,k);
