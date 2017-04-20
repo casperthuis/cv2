@@ -5,3 +5,4 @@
       - option: ptCloudA = pcdownsample(ptCloud,'gridAverage',gridStep);
   - commit your optimization for the matching for-loop
   - clean up assignment repo
+  - remove z-background from point clouds
