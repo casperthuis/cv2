@@ -30,8 +30,14 @@ function [R, t] = icp(source_file_name, target_file_name, source_type ,plotting,
         P = loadMatrixFromFile(source_file_name);  
         Q = loadMatrixFromFile(target_file_name);
     elseif strcmp(source_type,'.pcd')
-        P = loadPcdFromFile(source_file_name);  
-        Q = loadPcdFromFile(target_file_name);
+       
+        P = loadPcdFromFile(source_file_name, true);  
+        Q = loadPcdFromFile(target_file_name, true);
+        if size(P,1) > size(Q,1)
+            P = P(1:size(Q,1),:);
+        else
+            Q = Q(1:size(P,1),:);
+        end
     else 
         error('unsuported file, must be .mat or .pcd');
     end
