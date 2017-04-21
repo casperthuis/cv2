@@ -25,7 +25,9 @@ function [ Pcd,Pcd2 ] = samplePoints(Pcd,sampling, percentage, varargin)
     elseif strcmp('random', sampling)
         k = round(n*percentage);
         idxs = randi([1 n],1,k);
-    else 
+    elseif  strcmp('informative', sampling)
+            % todo implement informative
+    else   
         error('Give a valid sampling method')
     end
     

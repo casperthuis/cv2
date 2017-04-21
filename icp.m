@@ -50,7 +50,7 @@ function [R, t] = icp(source_file_name, target_file_name, source_type ,plotting,
             transformed_P = samplePoints(transformed_P, sampling_type, percentage);
         end  
         
-        [~, ~, Q_matches] =  matchPoints(transformed_P,Q, 'kd_tree'); 
+        [~, ~, Q_matches] =  matchPoints(transformed_P,Q, 'brute_force'); 
         
         P_mean = mean(transformed_P,2);
         Q_mean = mean(Q_matches,2);
@@ -61,8 +61,10 @@ function [R, t] = icp(source_file_name, target_file_name, source_type ,plotting,
         t_ = P_mean - R * Q_mean;
         t = R_ * t + t_;
         
+        
         rms = calc_error(transformed_P, Q_matches); 
         transformed_P = R * P - t;
+        
         if plotting
             clf;
             hold on; 
