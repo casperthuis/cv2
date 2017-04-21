@@ -6,3 +6,4 @@
   - commit your optimization for the matching for-loop
   - clean up assignment repo
   - remove z-background from point clouds
+  - remove CV lib functions 
