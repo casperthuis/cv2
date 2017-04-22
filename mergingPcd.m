@@ -1,11 +1,39 @@
-function [] = mergingPcd(size)
-    files =  dir('./data/*.pcd'); % get all pcd files, 
-    total_file = size(files,1) /2 
-    for idx =1:size:total_file
-        soruce_name =  strcat('./data/','000000000', int2str(idx),'.mat');
-        target_name =  strcat('./data/','000000000', int2str(idx),'.mat');
-        [R, t] = icp(soruce_name, target_name, '.pcd', false, 'uniform')
-    end 
+function [] = mergingPcd(s)
+    files = dir('./data/*.pcd'); % get all pcd files, 
+    % Remove the ._ files
+    fnames = files(arrayfun(@(x) x.name(1), files) ~= '.');
+    % Remove the normal vectors
+    fnames = fnames(arrayfun(@(x) x.name(end-4), fnames) ~= 'l');
+    len = length(fnames);
+    
+    for i = 1:(len-1)
+        %loadPcdFromFile(strcat('./data/', fnames{i}))
+        source_name = strcat('./data/', fnames(i).name);
+        target_name = strcat('./data/', fnames(i+1).name);
+        % Remove empty matrices
+        [R, t] = icp(source_name, target_name, '.pcd', false, 'uniform');
+        %p = loadPcdFromFile(file_1, true);
+        %q = loadPcdFromFile(file_2, true);
+        %TODO: why are their 4 dimesions
+        % scatter3(p(:,1), p(:,3), -pcloud(:,2))
+        % scatter(p(:,1), p(:,2))
+        
+        break
+    end
+    
+    
+    %for i = 1:length
+    %    files.name
+    %    break
+    %end
+    %total_file = size(files,1) /2 
+    
+    
+    %for idx =1:size:total_file
+    %    soruce_name =  strcat('./data/','000000000', int2str(idx),'.mat');
+    %    target_name =  strcat('./data/','000000000', int2str(idx),'.mat');
+    %    [R, t] = icp(soruce_name, target_name, '.pcd', false, 'uniform')
+    %end 
 end
 
 
