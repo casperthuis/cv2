@@ -18,7 +18,7 @@ function [] = mergingPcd(s)
         % scatter3(p(:,1), p(:,3), -pcloud(:,2))
         % scatter(p(:,1), p(:,2))
         
-        break
+        disp(R)
     end
     
     
