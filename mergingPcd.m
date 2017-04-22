@@ -1,32 +1,43 @@
-function [] = mergingPcd(s)
+function [] = mergingPcd(step)
     files = dir('./data/*.pcd'); % get all pcd files, 
     % Remove the ._ files
     fnames = files(arrayfun(@(x) x.name(1), files) ~= '.');
     % Remove the normal vectors
     fnames = fnames(arrayfun(@(x) x.name(end-4), fnames) ~= 'l');
     len = length(fnames);
-    
-    for i = 1:(len-1)
-        %loadPcdFromFile(strcat('./data/', fnames{i}))
+    rotations = cell(len);
+    translations = cell(len);
+    for i = 1:step:(len-step)
+        
         source_name = strcat('./data/', fnames(i).name);
         target_name = strcat('./data/', fnames(i+1).name);
-        % Remove empty matrices
-        [R, t] = icp(source_name, target_name, '.pcd', false, 'uniform');
-        %p = loadPcdFromFile(file_1, true);
-        %q = loadPcdFromFile(file_2, true);
-        %TODO: why are their 4 dimesions
-        % scatter3(p(:,1), p(:,3), -pcloud(:,2))
-        % scatter(p(:,1), p(:,2))
         
-        disp(R)
+        [R, t] = icp(source_name, target_name, '.pcd', false, 'uniform');
+        rotations{i} = R;
+        translations{i} = t;
     end
     
+    ptcloud1 = loadPcdFromFile(strcat('./data/',fnames(1).name), true);
+    Ra = eye(3, 3);
+    ta = zeros(3, 1);
     
-    %for i = 1:length
-    %    files.name
-    %    break
-    %end
-    %total_file = size(files,1) /2 
+    ptclouds = cell(len);
+    for f_i=1:step:(len-step)
+        R = rotations{i}
+        t = translations{i}
+        Ra = R * Ra;
+        % Is this correct?
+        ta = R * ta + t;
+        ptclouds{f_i} = R * ptcloud1 - t;
+        
+% for frame_id in range(0, frames - step, step):
+%     # accumulate R, t to compute Ra, ta from frame[0] to frame[frame_id]
+%     Ra = dot(R, Ra)
+%     ta = dot(R, ta) + t
+% 
+%     merge points from frame[frame_id] with point_cloud using Ra, ta
+    
+  
     
     
     %for idx =1:size:total_file
