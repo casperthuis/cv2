@@ -1,4 +1,4 @@
-function [R, t] = icp(source_file_name, target_file_name, source_type ,plotting, sampling_type)
+function [R, t, transformed_P] = icp(source_file_name, target_file_name, source_type ,plotting, sampling_type)
 % -------------------------------------------------------------------------
 %   Description:
 %     Implementation of the ICP algorithm.
@@ -38,7 +38,6 @@ function [R, t] = icp(source_file_name, target_file_name, source_type ,plotting,
         error('unsuported file, must be .mat or .pcd');
     end
     
-    iters = 30; % max iters,  maybe this should be a input var 
     n = size(P, 2);
     m = size(Q, 2);
     R = eye(3);
@@ -46,14 +45,17 @@ function [R, t] = icp(source_file_name, target_file_name, source_type ,plotting,
     current_rms = inf(1);
     time = cputime;
     transformed_P = P;
-    for itr = 1:iters
-        percentage = 0.1; % maybe this should be a input var
+    
+    itr = 0;
+    for itr=1:30
+        itr = itr + 1;
+        percentage = 0.1; 
         if ~strcmp(sampling_type, 'all')
             transformed_P = samplePoints(transformed_P, sampling_type, percentage);
         end  
         
 
-        [~, ~, Q_matches] = matchPoints(transformed_P,Q, 'brute_force'); 
+        [~, dist, Q_matches] = matchPoints(transformed_P,Q, 'kd_tree'); 
 
         P_mean = mean(transformed_P,2);
         Q_mean = mean(Q_matches,2);
@@ -64,29 +66,30 @@ function [R, t] = icp(source_file_name, target_file_name, source_type ,plotting,
         t_ = P_mean - R * Q_mean;
         t = R_ * t + t_;
         
-
+        
         
         rms = calc_error(transformed_P, Q_matches); 
         transformed_P = R * P - t;
         
-
         if plotting
             clf;
             hold on; 
-            plot3(transformed_P(  ))
-            %pcshow(transpose(transformed_P), 'b');
-            %pcshow(transpose(Q), 'r');
+            %plot3(transformed_P(  ))
+            pcshow(transpose(transformed_P), 'b');
+            pcshow(transpose(Q), 'r');
             pause(0.1);
         end
-        if rms < current_rms || rms == 0 || abs(current_rms - rms < 0.01)
+        if abs(rms - current_rms) > 10^(-6) 
             current_rms =  rms;
             if  plotting
+                
                 disp(strcat('current error: ', num2str(current_rms,3)));
             end 
         else 
             break
         end 
     end
+    disp(itr);
     disp(strcat('final error: ', num2str(current_rms,3)));
     disp(strcat('cpu time to iterations: ', num2str(cputime-time)))
 end %icp 

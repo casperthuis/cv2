@@ -31,7 +31,7 @@ function [match, mindist,new_q] = matchPoints(p, q, matching_type)
         mindist = sqrt(mindist);
     elseif strcmp(matching_type, 'kd_tree')
         Mdl = KDTreeSearcher(q.');
-        match = knnsearch(Mdl,p.','K',1);
+        [match, mindist] = knnsearch(Mdl,p.','K',1);
         for ki=1:m
             new_q(:,ki) = q(:,match(ki));
         end
