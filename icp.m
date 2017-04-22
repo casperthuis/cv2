@@ -50,7 +50,7 @@ function [R, t] = icp(source_file_name, target_file_name, source_type ,plotting,
             transformed_P = samplePoints(transformed_P, sampling_type, percentage);
         end  
         
-        [~, ~, Q_matches] =  matchPoints(transformed_P,Q, 'kd_tree'); 
+        [~, ~, Q_matches] = matchPoints(transformed_P,Q, 'kd_tree'); 
         
         P_mean = mean(transformed_P,2);
         Q_mean = mean(Q_matches,2);
@@ -61,13 +61,15 @@ function [R, t] = icp(source_file_name, target_file_name, source_type ,plotting,
         t_ = P_mean - R * Q_mean;
         t = R_ * t + t_;
         
-        rms = calc_error(transformed_P, Q_matches); 
+
         transformed_P = R * P - t;
+        rms = calc_error(transformed_P, Q); 
         if plotting
             clf;
             hold on; 
-            showPointCloud(transpose(transformed_P), 'b');
-            showPointCloud(transpose(Q), 'r');
+            plot3(transformed_P(  ))
+            %pcshow(transpose(transformed_P), 'b');
+            %pcshow(transpose(Q), 'r');
             pause(0.1);
         end
         if rms < current_rms || rms == 0 || abs(current_rms - rms < 0.01)
