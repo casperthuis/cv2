@@ -22,7 +22,7 @@ function [R, t] = icp(source_file_name, target_file_name, source_type ,plotting,
         figure;
     end
     
-    if ~strcmp(sampling_type, 'random') && ~strcmp(sampling_type, 'uniform') && ~strcmp(sampling_type, 'all')
+    if ~strcmp(sampling_type, 'random') && ~strcmp(sampling_type, 'uniform') && ~strcmp(sampling_type, 'all') && ~strcmp(sampling_type, 'informative')
         error('give a valid sampling type: all, random or uniform');
     end 
     
