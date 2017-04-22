@@ -23,12 +23,8 @@ function [match, mindist,new_q] = matchPoints(p, q, matching_type)
     new_q = zeros(size(p,1), size(p,2));
     if strcmp(matching_type, 'brute_force')
         for ki=1:m
-            d=zeros(1,n);
-            for ti=1:3
-                % q(ti,:) is the whole row of x,y or z, p(ti,ki) is only one
-                % points x,y or z. 
-                d=d+(q(ti,:)-p(ti,ki)).^2;
-            end
+            d = sum((q - p(:,ki)).^2);
+            
             [mindist(ki),match(ki)]=min(d);
             new_q(:,ki) = q(:,match(ki));
         end

@@ -25,7 +25,11 @@ function [ Pcd,Pcd2 ] = samplePoints(Pcd,sampling, percentage, varargin)
     elseif strcmp('random', sampling)
         k = round(n*percentage);
         idxs = randi([1 n],1,k);
-    else 
+    elseif  strcmp('informative', sampling)
+        Pcd = pcdownsample(Pcd,'gridAverage',2);
+        Pcd2 = pcdownsample(varargin{1},'gridAverage',2);
+        return 
+    else   
         error('Give a valid sampling method')
     end
     

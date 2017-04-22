@@ -22,7 +22,7 @@ function [R, t] = icp(source_file_name, target_file_name, source_type ,plotting,
         figure;
     end
     
-    if ~strcmp(sampling_type, 'random') && ~strcmp(sampling_type, 'uniform') && ~strcmp(sampling_type, 'all')
+    if ~strcmp(sampling_type, 'random') && ~strcmp(sampling_type, 'uniform') && ~strcmp(sampling_type, 'all') && ~strcmp(sampling_type, 'informative')
         error('give a valid sampling type: all, random or uniform');
     end 
     
@@ -30,8 +30,14 @@ function [R, t] = icp(source_file_name, target_file_name, source_type ,plotting,
         P = loadMatrixFromFile(source_file_name);  
         Q = loadMatrixFromFile(target_file_name);
     elseif strcmp(source_type,'.pcd')
-        P = loadPcdFromFile(source_file_name);  
-        Q = loadPcdFromFile(target_file_name);
+       
+        P = loadPcdFromFile(source_file_name, true);  
+        Q = loadPcdFromFile(target_file_name, true);
+        if size(P,1) > size(Q,1)
+            P = P(1:size(Q,1),:);
+        else
+            Q = Q(1:size(P,1),:);
+        end
     else 
         error('unsuported file, must be .mat or .pcd');
     end
@@ -39,8 +45,8 @@ function [R, t] = icp(source_file_name, target_file_name, source_type ,plotting,
     iters = 30; % max iters,  maybe this should be a input var 
     n = size(P, 2);
     m = size(Q, 2);
-    R =  eye(3);
-    t =  zeros(3,1);
+    R = eye(3);
+    t = zeros(3,1);
     current_rms = inf(1);
     time = cputime;
     transformed_P = P;
@@ -50,7 +56,9 @@ function [R, t] = icp(source_file_name, target_file_name, source_type ,plotting,
             transformed_P = samplePoints(transformed_P, sampling_type, percentage);
         end  
         
+
         [~, ~, Q_matches] = matchPoints(transformed_P,Q, 'kd_tree'); 
+
         
         P_mean = mean(transformed_P,2);
         Q_mean = mean(Q_matches,2);
@@ -62,8 +70,11 @@ function [R, t] = icp(source_file_name, target_file_name, source_type ,plotting,
         t = R_ * t + t_;
         
 
+        
+        rms = calc_error(transformed_P, Q_matches); 
         transformed_P = R * P - t;
-        rms = calc_error(transformed_P, Q); 
+        
+
         if plotting
             clf;
             hold on; 
