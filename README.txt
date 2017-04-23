@@ -6,3 +6,7 @@ How to test the code
 2.1
     - [ptclouds, rms] = mergingPcd(1, 10, 1);
     - [ptclouds, rms] = mergingPcd(1, 10, 2); # running this on all frames if too slow
+
+
+
+icp.m line 69 to change the percentage of sampling

@@ -1,5 +1,5 @@
 
-function [R_total, t_total, transformed_P] = icp(source_file_name, target_file_name, source_type ,plotting, sampling_type, ass22)
+function [R_total, t_total, current_rms] = icp(source_file_name, target_file_name, source_type ,plotting, sampling_type, ass22)
 % -------------------------------------------------------------------------
 %   Description:
 %     Implementation of the ICP algorithm.
