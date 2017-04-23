@@ -31,11 +31,11 @@ function [match, mindist,new_q] = matchPoints(p, q, matching_type)
         mindist = sqrt(mindist);
     elseif strcmp(matching_type, 'kd_tree')
         Mdl = KDTreeSearcher(q.');
-        [match, mindist] = knnsearch(Mdl,p.','K',1);
+        [match, mindist] = knnsearch(Mdl, p.');
         for ki=1:m
             new_q(:,ki) = q(:,match(ki));
         end
     else 
         error('use a valid matching type: brute_force or kd_tree')
     end
-end % matchBruteForce
+end % matchPoints

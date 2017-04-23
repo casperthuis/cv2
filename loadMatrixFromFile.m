@@ -8,7 +8,7 @@ function matrix=loadMatrixFromFile(filename)
 %       source folder
 %
 %   Output:
-%       - matrix: subsampled point cloud
+%       - matrix: matrix output
 %
 % -------------------------------------------------------------------------
 

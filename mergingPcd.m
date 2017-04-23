@@ -1,4 +1,18 @@
-function [ptclouds] = mergingPcd(step)
+function [ptclouds] = mergingPcd(step, sample_step, assignment)
+% -------------------------------------------------------------------------
+%   Description:
+%     Function two merging different Point clouds to one, ex 2.1
+%
+%   Input:
+%       - step : step between scenes
+%       - sample_step: how many of the total pointcloud you want to plot?
+%       - assignment: 1 or 2, depending if we are doing ass 2.1 or 2.2
+%
+%   Output:
+%       - ptclouds: merged pcd
+%
+% -------------------------------------------------------------------------
+ 
     files = dir('./data/*.pcd'); % get all pcd files, 
     % Remove the ._ files
     fnames = files(arrayfun(@(x) x.name(1), files) ~= '.');
@@ -6,66 +20,46 @@ function [ptclouds] = mergingPcd(step)
     fnames = fnames(arrayfun(@(x) x.name(end-4), fnames) ~= 'l');
     len = length(fnames);
 
-    ptclouds = zeros(3, 0);
+   
     
     R_total = eye(3);
     t_total = zeros(3,1);
+    ptclouds = zeros(3, 0);
+    if assignment == 1
+        for i = 1:step:(len-step)
+            source_name = strcat('./data/', fnames(i).name);
+            target_name = strcat('./data/', fnames(i+step).name);
+            [R, t] = icp(source_name, target_name, '.pcd', false, 'uniform', false);
 
-    for i = 1:step:(len-step)
-        source_name = strcat('./data/', fnames(i).name);
-        target_name = strcat('./data/', fnames(i+1).name);
-        [R, t] = icp(source_name, target_name, '.pcd', false, 'uniform');
 
-        
-        R_total = R_total * R;
-        t_total = t + t_total;
-       
-        ptCloud = loadPcdFromFile(source_name, true);
-        ptCloud = R_total * ptCloud - t_total;
-        
-        ptclouds = [ptclouds ptCloud];
-        
+            R_total = R * R_total;
+            t_total = R * t_total + t;
+
+            ptCloud = loadPcdFromFile(target_name, true);
+            ptCloud = R_total * ptCloud + t_total;
+
+            ptclouds = [ptclouds ptCloud];
+
+        end
+    elseif assignment == 2
+        compare = loadPcdFromFile(strcat('./data/', fnames(1).name), true);
+        for i = 1:step:(len-step)
+            target_name = strcat('./data/', fnames(i+1).name);
+            [R, t] = icp(compare, target_name, '.pcd', false, 'uniform', true);
+
+            R_total = R * R_total;
+            t_total = R * t_total + t;
+
+            ptCloud = loadPcdFromFile(target_name, true);
+            ptCloud = R * ptCloud + t;
+            compare = ptCloud;
+            ptclouds = [ptclouds ptCloud];
+
+        end
+    else
+        error('give  a valid assigment number 1 or 2')
     end
-    
-    pcshow(transpose(ptclouds), 'b');
-
+   
+    sample = ptclouds(:,1:sample_step:size(ptclouds,2));
+    pcshow(transpose(sample));
 end
-
-
-
-
-% loadPcdFromFile
-
-% 2.1
-% 
-% step = 1 # Do experiments with 1, 2, 4, 10
-% for frame_id in range(0, nframes - step, step):
-%     estimate R, t from frame[frame_id] to frame[frame_id + step]
-% 
-% point_cloud = points from frame[0]
-% 
-% Ra = eye(3, 3)
-% ta = zeros(3, 1)
-% 
-% for frame_id in range(0, frames - step, step):
-%     # accumulate R, t to compute Ra, ta from frame[0] to frame[frame_id]
-%     Ra = dot(R, Ra)
-%     ta = dot(R, ta) + t
-% 
-%     merge points from frame[frame_id] with point_cloud using Ra, ta
-% 
-% 2.2
-% 
-% point_cloud = frame[0]
-% 
-% rotation = eye(3, 3)
-% translation = zeros(3, 1)
-% 
-% for frame_id in range(1, nframes):
-%     estimate R, t from frame[0] to frame[frame_id]
-% 
-%     # You can try to use a coordinate system of frame[0] or a coordinate system
-%     # of another frame instead and investigate an influence of that choice.
-%     # Rotation and translation are accumulated in the same way.
-%     transform point_cloud to the coordinate system of points from frame[frame_id]
-%     merge points from frame[frame_id] with point_cloud
