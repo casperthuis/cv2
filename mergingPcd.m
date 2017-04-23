@@ -27,7 +27,7 @@ function [ptclouds] = mergingPcd(step, sample_step, assignment)
     if assignment == 1
         for i = 1:step:(len-step)
             source_name = strcat('./data/', fnames(i).name);
-            target_name = strcat('./data/', fnames(i+1).name);
+            target_name = strcat('./data/', fnames(i+step).name);
             [R, t] = icp(source_name, target_name, '.pcd', false, 'uniform', false);
 
             R_total = R * R_total;

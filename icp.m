@@ -38,7 +38,7 @@ function [R_total, t_total, transformed_P] = icp(source_file_name, target_file_n
         Q = loadMatrixFromFile(target_file_name);
     elseif strcmp(source_type,'.pcd')
        if ~ass22
-            P = loadPcdFromFile(source_file_name);
+            P = loadPcdFromFile(source_file_name, true);
         else 
             P = source_file_name;
        end  
