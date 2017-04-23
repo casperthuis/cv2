@@ -1,4 +1,4 @@
-function [ptclouds] = mergingPcd(step, sample_step, assignment)
+function [ptclouds, rms_list] = mergingPcd(step, sample_step, assignment)
 % -------------------------------------------------------------------------
 %   Description:
 %     Function two merging different Point clouds to one, ex 2.1
@@ -19,17 +19,20 @@ function [ptclouds] = mergingPcd(step, sample_step, assignment)
     % Remove the normal vectors
     fnames = fnames(arrayfun(@(x) x.name(end-4), fnames) ~= 'l');
     len = length(fnames);
-   
+
     
     R_total = eye(3);
     t_total = zeros(3,1);
     ptclouds = zeros(3, 0);
+    rms_list = [];
     if assignment == 1
+    
         for i = 1:step:(len-step)
+            disp(i);
             source_name = strcat('./data/', fnames(i).name);
             target_name = strcat('./data/', fnames(i+step).name);
-            [R, t] = icp(source_name, target_name, '.pcd', false, 'uniform', false);
-
+            [R, t, rms] = icp(source_name, target_name, '.pcd', false, 'uniform', false);
+            rms_list = [rms_list rms];
             R_total = R * R_total;
             t_total = R * t_total + t;
 
@@ -40,17 +43,17 @@ function [ptclouds] = mergingPcd(step, sample_step, assignment)
 
         end
     elseif assignment == 2
-        compare = loadPcdFromFile(strcat('./data/', fnames(1).name), true);
+        ptclouds = loadPcdFromFile(strcat('./data/', fnames(1).name), true);
         for i = 1:step:(len-step)
+            disp(i);
             target_name = strcat('./data/', fnames(i+1).name);
-            [R, t] = icp(compare, target_name, '.pcd', false, 'uniform', true);
-
+            [R, t, rms] = icp(ptclouds, target_name, '.pcd', false, 'uniform', true);
+            rms_list = [rms_list rms];
             R_total = R * R_total;
             t_total = R * t_total + t;
 
             ptCloud = loadPcdFromFile(target_name, true);
             ptCloud = R * ptCloud + t;
-            compare = ptCloud;
             ptclouds = [ptclouds ptCloud];
 
         end
