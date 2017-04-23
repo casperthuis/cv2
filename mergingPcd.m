@@ -23,8 +23,8 @@ function [ptclouds] = mergingPcd(step, sample_step, assignment)
     
     R_total = eye(3);
     t_total = zeros(3,1);
+    ptclouds = zeros(3, 0);
     if assignment == 1
-        ptclouds = zeros(3, 0);
         for i = 1:step:(len-step)
             source_name = strcat('./data/', fnames(i).name);
             target_name = strcat('./data/', fnames(i+1).name);
@@ -40,17 +40,17 @@ function [ptclouds] = mergingPcd(step, sample_step, assignment)
 
         end
     elseif assignment == 2
-        ptclouds = loadPcdFromFile(strcat('./data/', fnames(1).name), true);
+        compare = loadPcdFromFile(strcat('./data/', fnames(1).name), true);
         for i = 1:step:(len-step)
             target_name = strcat('./data/', fnames(i+1).name);
-            [R, t] = icp(ptclouds, target_name, '.pcd', false, 'uniform', true);
+            [R, t] = icp(compare, target_name, '.pcd', false, 'uniform', true);
 
             R_total = R * R_total;
             t_total = R * t_total + t;
 
             ptCloud = loadPcdFromFile(target_name, true);
             ptCloud = R * ptCloud + t;
-
+            compare = ptCloud;
             ptclouds = [ptclouds ptCloud];
 
         end
