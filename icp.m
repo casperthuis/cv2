@@ -41,39 +41,31 @@ function [R_total, t_total, transformed_P] = icp(source_file_name, target_file_n
     
     n = size(P, 2);
     m = size(Q, 2);
+    
     R = eye(3);
     t = zeros(3,1);
     current_rms = inf(1);
     time = cputime;
+    
     transformed_Q = Q;
     
     R_total = R;
     t_total = t;
-    P_all = P;
+    P_all = P; % copy of P to sample using for sampling
+    
     itr = 0;
     
     while true
         itr = itr + 1;
         percentage = 0.1; 
+        
         if ~strcmp(sampling_type, 'all')
             P = samplePoints(P_all, sampling_type, percentage);
         end
         
-
         [~, mindist, Q_matches] = matchPoints(P ,transformed_Q, 'kd_tree');
         
         rms = calc_error(P, Q_matches); 
-        
-        P_mean = mean(P,2);
-        Q_mean = mean(Q_matches,2);
-        
-        R = calcR(P, Q_matches, P_mean,Q_mean); 
-        t = P_mean - R * Q_mean;
-        
-        transformed_Q = R * transformed_Q + t;
-        
-        R_total = R * R_total;
-        t_total = R * t_total + t;
         
         if plotting
             clf;
@@ -85,9 +77,21 @@ function [R_total, t_total, transformed_P] = icp(source_file_name, target_file_n
         end
         if abs(rms - current_rms) > 10^(-6) 
             current_rms =  rms;
+            
             if  plotting
                 disp(strcat('current error: ', num2str(current_rms,3)));
-            end 
+            end
+            
+            P_mean = mean(P,2);
+            Q_mean = mean(Q_matches,2);
+
+            R = calcR(P, Q_matches, P_mean,Q_mean); 
+            t = P_mean - R * Q_mean;
+
+            transformed_Q = R * transformed_Q + t;
+
+            R_total = R * R_total;
+            t_total = R * t_total + t;
         else 
             break
         end 

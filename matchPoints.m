@@ -38,4 +38,4 @@ function [match, mindist,new_q] = matchPoints(p, q, matching_type)
     else 
         error('use a valid matching type: brute_force or kd_tree')
     end
-end % matchBruteForce
+end % matchPoints

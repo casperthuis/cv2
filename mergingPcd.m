@@ -1,4 +1,17 @@
 function [ptclouds] = mergingPcd(step, sample_step)
+% -------------------------------------------------------------------------
+%   Description:
+%     Function two merging different Point clouds to one, ex 2.1
+%
+%   Input:
+%       - step : step between scenes
+%       - sample_step: how many of the total pointcloud you want to plot?
+%
+%   Output:
+%       - ptclouds: merged pcd
+%
+% -------------------------------------------------------------------------
+ 
     files = dir('./data/*.pcd'); % get all pcd files, 
     % Remove the ._ files
     fnames = files(arrayfun(@(x) x.name(1), files) ~= '.');
