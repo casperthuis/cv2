@@ -1,4 +1,5 @@
-function [R, t, transformed_P] = icp(source_file_name, target_file_name, source_type ,plotting, sampling_type)
+
+function [R_total, t_total, transformed_P] = icp(source_file_name, target_file_name, source_type ,plotting, sampling_type)
 % -------------------------------------------------------------------------
 %   Description:
 %     Implementation of the ICP algorithm.
@@ -44,45 +45,47 @@ function [R, t, transformed_P] = icp(source_file_name, target_file_name, source_
     t = zeros(3,1);
     current_rms = inf(1);
     time = cputime;
-    transformed_P = P;
+    transformed_Q = Q;
     
+    R_total = R;
+    t_total = t;
+    P_all = P;
     itr = 0;
-    for itr=1:30
+    
+    while true
         itr = itr + 1;
         percentage = 0.1; 
         if ~strcmp(sampling_type, 'all')
-            transformed_P = samplePoints(transformed_P, sampling_type, percentage);
-        end  
+            P = samplePoints(P_all, sampling_type, percentage);
+        end
         
 
-        [~, dist, Q_matches] = matchPoints(transformed_P,Q, 'kd_tree'); 
-
-        P_mean = mean(transformed_P,2);
+        [~, mindist, Q_matches] = matchPoints(P ,transformed_Q, 'kd_tree');
+        
+        rms = calc_error(P, Q_matches); 
+        
+        P_mean = mean(P,2);
         Q_mean = mean(Q_matches,2);
         
-        R_ = calcR(transformed_P, Q_matches, P_mean,Q_mean); 
-        R = R_ * R;
+        R = calcR(P, Q_matches, P_mean,Q_mean); 
+        t = P_mean - R * Q_mean;
         
-        t_ = P_mean - R * Q_mean;
-        t = R_ * t + t_;
+        transformed_Q = R * transformed_Q + t;
         
-        
-        
-        rms = calc_error(transformed_P, Q_matches); 
-        transformed_P = R * P - t;
+        R_total = R * R_total;
+        t_total = R * t_total + t;
         
         if plotting
             clf;
             hold on; 
             %plot3(transformed_P(  ))
-            pcshow(transpose(transformed_P), 'b');
-            pcshow(transpose(Q), 'r');
+            pcshow(transpose(P_all), 'b');
+            pcshow(transpose(transformed_Q), 'r');
             pause(0.1);
         end
         if abs(rms - current_rms) > 10^(-6) 
             current_rms =  rms;
             if  plotting
-                
                 disp(strcat('current error: ', num2str(current_rms,3)));
             end 
         else 
