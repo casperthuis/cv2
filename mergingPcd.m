@@ -1,4 +1,4 @@
-function [ptclouds] = mergingPcd(step)
+function [ptclouds] = mergingPcd(step, sample_step)
     files = dir('./data/*.pcd'); % get all pcd files, 
     % Remove the ._ files
     fnames = files(arrayfun(@(x) x.name(1), files) ~= '.');
@@ -14,16 +14,17 @@ function [ptclouds] = mergingPcd(step)
         target_name = strcat('./data/', fnames(i+1).name);
         [R, t] = icp(source_name, target_name, '.pcd', false, 'uniform');
         
-        R_total = R_total * R;
-        t_total = t + t_total;
+        R_total = R * R_total;
+        t_total = R * t_total + t;
        
-        ptCloud = loadPcdFromFile(source_name, true);
-        ptCloud = R_total * ptCloud - t_total;
+        ptCloud = loadPcdFromFile(target_name, true);
+        ptCloud = R_total * ptCloud + t_total;
         
         ptclouds = [ptclouds ptCloud];
         
     end
-    pcshow(transpose(ptclouds), 'b');
+    sample = ptclouds(:,1:sample_step:size(ptclouds,2));
+    pcshow(transpose(sample), 'b');
 end
 
 
