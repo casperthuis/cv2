@@ -24,32 +24,10 @@ function [ptclouds] = mergingPcd(step, sample_step)
         
     end
     sample = ptclouds(:,1:sample_step:size(ptclouds,2));
-    pcshow(transpose(sample), 'b');
+    pcshow(transpose(sample));
 end
 
 
-
-
-% loadPcdFromFile
-
-% 2.1
-% 
-% step = 1 # Do experiments with 1, 2, 4, 10
-% for frame_id in range(0, nframes - step, step):
-%     estimate R, t from frame[frame_id] to frame[frame_id + step]
-% 
-% point_cloud = points from frame[0]
-% 
-% Ra = eye(3, 3)
-% ta = zeros(3, 1)
-% 
-% for frame_id in range(0, frames - step, step):
-%     # accumulate R, t to compute Ra, ta from frame[0] to frame[frame_id]
-%     Ra = dot(R, Ra)
-%     ta = dot(R, ta) + t
-% 
-%     merge points from frame[frame_id] with point_cloud using Ra, ta
-% 
 % 2.2
 % 
 % point_cloud = frame[0]
