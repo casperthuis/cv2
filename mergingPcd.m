@@ -5,8 +5,8 @@ function [] = mergingPcd(step)
     % Remove the normal vectors
     fnames = fnames(arrayfun(@(x) x.name(end-4), fnames) ~= 'l');
     len = length(fnames);
-    rotations = cell(len);
-    translations = cell(len);
+    rotations = cell(len,1);
+    translations = cell(len,1);
     for i = 1:step:(len-step)
         
         source_name = strcat('./data/', fnames(i).name);
@@ -21,15 +21,22 @@ function [] = mergingPcd(step)
     Ra = eye(3, 3);
     ta = zeros(3, 1);
     
-    ptclouds = cell(len);
+    ptclouds = cell(len,1);
     for f_i=1:step:(len-step)
-        R = rotations{i}
-        t = translations{i}
+        R = rotations{i};
+        t = translations{i};
         Ra = R * Ra;
         % Is this correct?
         ta = R * ta + t;
-        ptclouds{f_i} = R * ptcloud1 - t;
-        
+        ptcloud = R * ptcloud1 - t;
+        ptclouds{f_i} = ptcloud;
+        hold on;
+        size(ptcloud)
+        ptcloud(3,:)
+        scatter3(ptcloud(1,:), ptcloud(2,:), ptcloud(3,:));
+    end  
+    
+    save('clouds.mat', ptclouds)
 % for frame_id in range(0, frames - step, step):
 %     # accumulate R, t to compute Ra, ta from frame[0] to frame[frame_id]
 %     Ra = dot(R, Ra)

@@ -6,7 +6,6 @@ function data = readPcd(fname)
 % Author: Kevin Lai
 
 fid = fopen(fname,'rt');
-
 isBinary = false;
 nPts = 0;
 nDims = -1;
