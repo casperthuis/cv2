@@ -1,5 +1,5 @@
 
-function [R_total, t_total, transformed_P] = icp(source_file_name, target_file_name, source_type ,plotting, sampling_type)
+function [R_total, t_total, transformed_P] = icp(source_file_name, target_file_name, source_type ,plotting, sampling_type, ass22)
 % -------------------------------------------------------------------------
 %   Description:
 %     Implementation of the ICP algorithm.
@@ -12,6 +12,8 @@ function [R_total, t_total, transformed_P] = icp(source_file_name, target_file_n
 %       - source_type: type of the source file: matrix or point cloud
 %       - plotting: if true, the results will be plotted
 %       - sampling_type: how to subsample the data
+%       - ass22: when doing assignment 2.2, use the source_file_name, which
+%       is a matrix in this case, as input. Do not load the file
 %
 %   Output:
 %       - R: rotation matrix
@@ -28,11 +30,18 @@ function [R_total, t_total, transformed_P] = icp(source_file_name, target_file_n
     end 
     
     if strcmp(source_type,'.mat')
-        P = loadMatrixFromFile(source_file_name);  
+        if ~ass22
+            P = loadMatrixFromFile(source_file_name);
+        else 
+            P = source_file_name
+        end 
         Q = loadMatrixFromFile(target_file_name);
     elseif strcmp(source_type,'.pcd')
-       
-        P = loadPcdFromFile(source_file_name, true);  
+       if ~ass22
+            P = loadPcdFromFile(source_file_name);
+        else 
+            P = source_file_name;
+       end  
         Q = loadPcdFromFile(target_file_name, true);
         
     else 
