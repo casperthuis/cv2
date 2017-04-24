@@ -26,6 +26,7 @@ function [ Pcd,Pcd2 ] = samplePoints(Pcd,sampling, percentage, varargin)
         k = round(n*percentage);
         idxs = randi([1 n],1,k);
     elseif  strcmp('informative', sampling)
+        %Pcd = pointCloud(Pcd');
         Pcd = pcdownsample(Pcd,'gridAverage',2);
         Pcd2 = pcdownsample(varargin{1},'gridAverage',2);
         return 

@@ -1,5 +1,5 @@
 
-function [R_total, t_total, transformed_P] = icp(source_file_name, target_file_name, source_type ,plotting, sampling_type, ass22)
+function [R_total, t_total, transformed_P, ttime, itr, current_rms] = icp(source_file_name, target_file_name, source_type ,plotting, sampling_type, noise, ass22)
 % -------------------------------------------------------------------------
 %   Description:
 %     Implementation of the ICP algorithm.
@@ -37,19 +37,18 @@ function [R_total, t_total, transformed_P] = icp(source_file_name, target_file_n
         end 
         Q = loadMatrixFromFile(target_file_name);
     elseif strcmp(source_type,'.pcd')
-<<<<<<< HEAD
-        P = loadPcdFromFile(source_file_name, true);  
-=======
        if ~ass22
             P = loadPcdFromFile(source_file_name, true);
         else 
             P = source_file_name;
        end  
->>>>>>> d365287a3c9a04519dc832fd510d5455f121d5f8
+
         Q = loadPcdFromFile(target_file_name, true);
     else 
         error('unsuported file, must be .mat or .pcd');
     end
+    
+    
     
     n = size(P, 2);
     m = size(Q, 2);
@@ -60,7 +59,10 @@ function [R_total, t_total, transformed_P] = icp(source_file_name, target_file_n
     time = cputime;
     
     transformed_Q = Q;
-    
+    %size(transformed_Q)
+    %transformed_Q = normrnd(transformed_Q, noise);
+    %size(transformed_Q)
+    transformed_P = normrnd(transformed_Q, noise);
     R_total = R;
     t_total = t;
     P_all = P; % copy of P to sample using for sampling
@@ -70,12 +72,11 @@ function [R_total, t_total, transformed_P] = icp(source_file_name, target_file_n
     while true
         itr = itr + 1;
         percentage = 0.1; 
-        
         if ~strcmp(sampling_type, 'all')
             P = samplePoints(P_all, sampling_type, percentage);
         end
         
-        [~, mindist, Q_matches] = matchPoints(P ,transformed_Q, 'kd_tree');
+        [~, mindist, Q_matches] = matchPoints(P ,transformed_Q, 'brute_force');
         
         rms = calc_error(P, Q_matches); 
         
@@ -111,4 +112,5 @@ function [R_total, t_total, transformed_P] = icp(source_file_name, target_file_n
     disp(itr);
     disp(strcat('final error: ', num2str(current_rms,3)));
     disp(strcat('cpu time to iterations: ', num2str(cputime-time)))
+    ttime = cputime-time;
 end %icp 
