@@ -9,4 +9,6 @@ How to test the code
 
 
 
-icp.m line 69 to change the percentage of sampling
+icp.m line 69 to change the percentage of the sampling
+
+Note: this program makes use  of the pcshow of the Computer Vision System Toolbox!
