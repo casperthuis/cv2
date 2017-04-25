@@ -82,10 +82,8 @@ elseif isBinary && ~IS_NEW
    data(:) = pts;
    data = data';
 else
-   format = [format '\n'];
-   C = textscan(fid,format);
-
+   format = [format '\r \n'];
+   C = textscan(fid,format, inf);
    data = cell2mat(C);
 end
 fclose(fid);
-

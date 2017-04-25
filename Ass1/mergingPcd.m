@@ -26,7 +26,6 @@ function [ptclouds, rms_list] = mergingPcd(step, sample_step, assignment)
     ptclouds = zeros(3, 0);
     rms_list = [];
     if assignment == 1
-    
         for i = 1:step:(len-step)
             disp(i);
             source_name = strcat('./data/', fnames(i).name);
