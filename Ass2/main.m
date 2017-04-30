@@ -14,27 +14,28 @@ im2 = im2single( imread( 'House/frame00000002.png' ) );
 % match sift features
 [matches, scores] = vl_ubcmatch(da, db);
 
-
-P = 20
-index = randsample(1:length(matches), P);
+N = 20;
+index = randsample(1:length(matches), N);
 selection = matches(:,index);
 
 
-xysample1 = fa(1:2, selection(1,:))'
-xysample2 = fb(1:2, selection(2,:))'
+p1 = fa(1:2, selection(1,:))';
+p2 = fb(1:2, selection(2,:))';
 
-x1 = xysample1(:,1);
-y1 = xysample1(:,2);
-x2 = xysample2(:,1);
-y2 = xysample2(:,2);
+x1 = p1(:,1);
+y1 = p1(:,2);
+x2 = p2(:,1);
+y2 = p2(:,2);
 
-A = [x1 .* x2, x1 .* y2, x1, y1 .* x2, y1.*y2, y1, x2, y2, ones(P,1)];  
+A = [x1 .* x2, x1 .* y2, x1, y1 .* x2, y1.*y2, y1, x2, y2, ones(N,1)];  
 
 [U, D, V] = svd(A);
-F = reshape(V(:,end), [3,3])
-[Uf, Df, Vf] = svd(F)
-Df(3,3) = 0
-F = Uf*Df*Vf'
+F = reshape(V(:,end), [3,3]);
+[Uf, Df, Vf] = svd(F);
+Df(3,3) = 0;
+F = Uf*Df*Vf';
+
+[T, norm_p] = normalisation([p1; p2])
 
 %[transformation, final_sample, ~] = ransac(fa, fb, matches, 8  , 50);
 %[frames1, frames2, matches] = siftmatches(im1, im2)
