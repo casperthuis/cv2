@@ -61,7 +61,7 @@ function [R_total, t_total, current_rms] = icp(source_file_name, target_file_nam
     %size(transformed_Q)
     %transformed_Q = normrnd(transformed_Q, noise);
     %size(transformed_Q)
-    transformed_P = normrnd(transformed_Q, noise);
+    % transformed_P = normrnd(transformed_Q, noise);
     R_total = R;
     t_total = t;
     P_all = P; % copy of P to sample using for sampling
