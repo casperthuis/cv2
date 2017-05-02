@@ -7,7 +7,7 @@ function main(im_path1, im_path2)
 im1 =  imread( 'House/frame00000001.png' );
 im2 =  imread( 'House/frame00000002.png' );
 
-[matches, fa, fb] = sift_matches(im1, im2);
+[matches, f1, f2, da, db ] = findMatches( im1, im2)
 
 
 N = 20;
