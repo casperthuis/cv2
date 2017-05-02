@@ -7,12 +7,8 @@ function main(im_path1, im_path2)
 im1 = im2single( imread( 'House/frame00000001.png' ) );
 im2 = im2single( imread( 'House/frame00000002.png' ) );
 
-% get sift features
-[fa, da] = vl_sift(im1);
-[fb, db] = vl_sift(im2);
+[matches, f1, f2, da, db ] = findMatches( im1, im2)
 
-% match sift features
-[matches, scores] = vl_ubcmatch(da, db);
 
 N = 20;
 index = randsample(1:length(matches), N);
