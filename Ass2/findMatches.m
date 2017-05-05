@@ -4,7 +4,7 @@ function [matches, frames1, frames2, descriptors1, descriptors2 ] = findMatches(
     [frames2, descriptors2] = vl_sift(im2);
 
     % match sift features
-    [matches, scores] = vl_ubcmatch(descriptors1, descriptors2);
+    [matches, ~] = vl_ubcmatch(descriptors1, descriptors2);
 
 end
 
