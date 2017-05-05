@@ -9,7 +9,6 @@ p2 = f1(1:2, matches(2,:));
 [T1, norm_p1] = normalisation(p1);
 [T2, norm_p2] = normalisation(p2);
 
-
 for i=1:N
     % pick random points
     perm = randperm(size(matches,2),8);
