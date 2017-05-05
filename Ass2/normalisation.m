@@ -13,6 +13,6 @@ T = [sqrt(2)/d, 0, -mean_x*sqrt(2)/d; 0 ,sqrt(2)/d, -mean_y*sqrt(2)/d;0 , 0, 1]
 
 proof = T* [ points, ones(length(x),1)]';
 
-norm_p = proof(1:2, :);
+norm_p = proof(1:2, :)';
 
 end

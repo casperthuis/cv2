@@ -7,8 +7,11 @@ function main(im_path1, im_path2)
 im1 =  imread( 'House/frame00000001.png' );
 im2 =  imread( 'House/frame00000002.png' );
 
-[matches, f1, f2, da, db ] = findMatches( im1, im2)
+% Find sift matches
+[matches, f1, f2, ~, ~] = findMatches( im1, im2);
 
+
+ransac_new(matches, f1, f2, 10)
 
 N = 20;
 
