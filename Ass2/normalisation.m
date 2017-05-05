@@ -8,10 +8,11 @@ mean_y = mean(y);
 d = mean(sqrt((x - mean_x).^2 + (y - mean_y).^2));
 
 % Calculate T
-T = [sqrt(2)/d, 0, -mean_x*sqrt(2)/d; 0 ,sqrt(2)/d, -mean_y*sqrt(2)/d;0 , 0, 1]
+T = [sqrt(2)/d, 0, -mean_x*sqrt(2)/d; 0 ,sqrt(2)/d, -mean_y*sqrt(2)/d;0 , 0, 1];
 
 % Normalise points
-phat = T* transpose([points, ones(length(points),1)]);
+
+phat = T* [points; ones(1, size(points,2))];
 norm_p = transpose(phat(1:2, :));
 
 end

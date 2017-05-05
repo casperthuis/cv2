@@ -10,8 +10,11 @@ im2 =  imread( 'House/frame00000002.png' );
 % Find sift matches
 [matches, f1, f2, ~, ~] = find_matches( im1, im2);
 
+size(matches)
+size(f1)
+size(f2)
 %ransac
-F = ransac_new(matches, f1, f2, 10)
+F = ransac_new(matches, f1, f2, 2);
 
 
 
