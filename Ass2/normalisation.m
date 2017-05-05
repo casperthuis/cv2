@@ -1,18 +1,17 @@
 function [T, norm_p] = normalisation(points)
+% Calculate mean
 x = points(:,1);
 y = points(:,2);
 mean_x = mean(x);
 mean_y = mean(y);
+% calculate d
+d = mean(sqrt((x - mean_x).^2 + (y - mean_y).^2));
 
-sq_x = (x - mean_x).^2;
-sq_y = (y - mean_y).^2;
-
-d = mean(sqrt(sq_x + sq_x));
-
+% Calculate T
 T = [sqrt(2)/d, 0, -mean_x*sqrt(2)/d; 0 ,sqrt(2)/d, -mean_y*sqrt(2)/d;0 , 0, 1]
 
-proof = T* [ points, ones(length(x),1)]';
-
-norm_p = proof(1:2, :)';
+% Normalise points
+phat = T* transpose([points, ones(length(points),1)]);
+norm_p = transpose(phat(1:2, :));
 
 end
