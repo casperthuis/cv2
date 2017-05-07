@@ -1,5 +1,5 @@
 function plot_epipolar(F, im1, im2, p1_norm, p2_norm, T1, T2)
-
+figure;
 p1_norm = [p1_norm, ones(size(p1_norm,1),1)]';
 p2_norm = [p2_norm, ones(size(p2_norm,1),1)]';
 

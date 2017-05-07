@@ -8,18 +8,16 @@ im1 =  imread( 'House/frame00000001.png' );
 im2 =  imread( 'House/frame00000002.png' );
 
 % Find sift matches
-[matches, f1, f2, ~, ~] = find_matches( im1, im2);
+[matches, f1, f2, ~, ~] = find_matches(im1, im2);
+
 
 %ransac
-[F, T1, T2, p1_norm, p2_norm] = ransac(matches, f1, f2, 100);
-
+[F, T1, T2, p1_norm, p2_norm] = ransac(matches, f1, f2, 100, 1);
 
 %plot epilor lines for 20
-plot_epipolar(F, im1, im2, p1_norm(1:20,:), p2_norm(1:20,:), T1, T2)
+plot_epipolar(F, im1, im2, p1_norm(1:20,:), p2_norm(1:20,:), T1, T2);
 %plot epilor lines for 50
-figure;
 plot_epipolar(F, im1, im2, p1_norm(1:50,:), p2_norm(1:50,:), T1, T2)
-figure;
 %plot epilor lines for 200
 plot_epipolar(F, im1, im2, p1_norm(1:200,:), p2_norm(1:200,:), T1, T2)
 
