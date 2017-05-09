@@ -1,4 +1,4 @@
-function [best_F, best_T1, best_T2, best_inliers_p1, best_inliers_p2] = ransac(matches, f1, f2, N, threshold)
+function [best_F, best_T1, best_T2, best_inliers_p1, best_inliers_p2, best_inliers_idx] = ransac(matches, f1, f2, N, threshold)
 best_inliers_num = 0;
 
 p1 = f1(1:2, matches(1,:));
@@ -25,7 +25,7 @@ for i=1:N
     F = get_F_matrix(norm_p1_set, norm_p2_set);
     
     % Count inliers
-    [num_inliers, inliers_p1, inliers_p2] = count_inliers(F, norm_p1, norm_p2, threshold);
+    [num_inliers, inliers_p1, inliers_p2, inliers_idx] = count_inliers(F, norm_p1, norm_p2, threshold);
     
     % Determine if better previous best
     if num_inliers > best_inliers_num
@@ -35,6 +35,7 @@ for i=1:N
         best_inliers_p2 = inliers_p2';
         best_T1 = T1;
         best_T2 = T2;
+        best_inliers_idx = inliers_idx;
     end
 end
 end

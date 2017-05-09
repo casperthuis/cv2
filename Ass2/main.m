@@ -12,7 +12,7 @@ im2 =  imread( 'House/frame00000002.png' );
 
 
 %ransac
-[F, T1, T2, p1_norm, p2_norm] = ransac(matches, f1, f2, 100, 1);
+[F, T1, T2, p1_norm, p2_norm, best_inliers] = ransac(matches, f1, f2, 100, 1);
 
 %plot epilor lines for 20
 plot_epipolar(F, im1, im2, p1_norm(1:20,:), p2_norm(1:20,:), T1, T2);
