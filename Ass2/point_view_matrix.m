@@ -26,15 +26,18 @@ function point_view_matrix(num_frames)
         
         for idx=1:size(previous_inliers, 2)
             number = previous_inliers(idx);
-            index = find(inliers_image1 == number);
-
-            if size(index,2) >= 1 && number ~= 0
-                next_row = [next_row, inliers_image2(index)];
-                inliers_image1(index) = 0; 
-                inliers_image2(index) = 0;
-            else
+            if  number ~= 0
+                index = find(inliers_image1 == number);
+                if size(index,2) >= 1
+                    next_row = [next_row, inliers_image2(index)];
+                    inliers_image1(index) = 0; 
+                    inliers_image2(index) = 0;
+                    continue 
+                end
                 next_row = [next_row, 0];
+                continue
             end
+            next_row = [next_row, 0];
         end
         
         new_key_points = nonzeros(inliers_image2)';
