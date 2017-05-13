@@ -1,10 +1,10 @@
-function [PVM, D] = point_view_matrix(num_frames)
+function [PVM, D] = point_view_matrix(start_frame, end_frame)
 
     % load the data set from disc
     images_dataset = read_images();
     % take a sample from 1 to num_frame  
-    images_dataset =  images_dataset(1:num_frames);
-    
+    images_dataset =  images_dataset(start_frame:end_frame);
+    num_frames = end_frame - start_frame;
     % to start get the first two images
     im1 = images_dataset{1};
     im2 = images_dataset{2};
@@ -12,11 +12,12 @@ function [PVM, D] = point_view_matrix(num_frames)
     % find matches
     [matches, f1, f2, ~, ~] = find_matches(im1, im2);
     [~, ~, ~, ~, ~, best_inliers] = ransac(matches, f1, f2, 50, 1);
-    
+    frames = {f1; f2};
     % initialise the PVM with all the matches in img1 and img2
     best_inlier_matches = matches(:,best_inliers);
     
     PVM = [best_inlier_matches(1,:); best_inlier_matches(2,:)];
+    
     D = [f1(1:2,best_inlier_matches(1,:));
          f2(1:2,best_inlier_matches(2,:))];
      
@@ -25,7 +26,7 @@ function [PVM, D] = point_view_matrix(num_frames)
         im2 = images_dataset{itr + 1};
        
         [matches, f1, f2, ~, ~] = find_matches(im1, im2);
-        
+        frames = cat(1, frames, f2);
         [~, ~, ~, ~, ~, best_inliers] = ransac(matches, f1, f2, 100, 1);
 
         inliers_image1 = matches(1,best_inliers);
@@ -78,7 +79,6 @@ function [PVM, D] = point_view_matrix(num_frames)
 
     % for testing, to see of the dense matirx is the same as the PVM matrix
 
-    figure;
-    imagesc(D(1:2:size(D,1),:) == 0);
-   
+    %figure;
+    %imagesc(D(1:2:size(D,1),:) == 0);
 end
