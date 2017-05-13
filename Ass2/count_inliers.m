@@ -1,5 +1,5 @@
 function [num_inliers, inliers_p1, inliers_p2,inliers] = inliers(F, p1, p2, threshold)
-
+    % function that count the inliers based on the model RANSAC found 
     d = sampson_distance(F, p1, p2);
     num_inliers = sum(d < threshold);
 
