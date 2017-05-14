@@ -7,7 +7,7 @@ p2 = f2(1:2, matches(2,:));
 
 for i=1:N
     % pick random points
-    perm = randperm(size(matches,2),9);
+    perm = randperm(size(matches,2),8);
     p1_set = p1(:, perm);
     p2_set = p2(:, perm);
     
